@@ -12,3 +12,12 @@ export type Company = {
   editors?: string[];
   category?: string;
 };
+
+export type Product = {
+  id: string;
+  name: string;
+  companyId: string;
+  stock: number;
+  category?: string;
+  price?: number;
+};
