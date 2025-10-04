@@ -1,31 +1,33 @@
 import { useState } from 'react'
-import { auth, provider } from '../firebase';
-import { signInWithPopup, signOut } from "firebase/auth";
+import { loginWithGoogle } from './auth';
+import Dashboard from './Dashboard';
+import Login from './Login'
 import './App.css'
 
-function App() {
-  const [user, setUser] = useState<import("firebase/auth").User | null>(null)
-  
-  const login = async () => {
-    const result = await signInWithPopup(auth, provider);
-    setUser(result.user);
-  }
+type User = {
+  uid: string;
+  email: string;
+  role: string;
+}
 
-  const logout = async () => {
-    await signOut(auth);
-    setUser(null);
+function App() {
+  const [user, setUser] = useState<User | null>(null)
+
+  const handleLogin = async () => {
+    const loggedUser = await loginWithGoogle();
+    setUser({
+      uid: loggedUser.uid,
+      email: loggedUser.email || "",
+      role: loggedUser.role
+    });
   }
 
   return (
-    <div style={{padding: "2rem"}}>
-      <h1>Galixify</h1>
+    <div className="App">
       {user ? (
-        <div>
-          <p>Bienvenidx, {user.displayName}</p>
-          <button onClick={logout}>Cerrar sesión</button>
-        </div>
+        <Dashboard user={user} />
       ) : (
-        <button onClick={login}>Iniciar sesión con Google</button>
+        <Login onLogin={handleLogin} />
       )}
     </div>
   );
